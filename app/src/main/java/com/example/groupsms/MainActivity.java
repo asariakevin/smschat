@@ -26,7 +26,8 @@ public class MainActivity extends AppCompatActivity {
 
         //check if SMS sending and viewing permissions
         //is granted
-        if(isSmsPermissionGranted() != PackageManager.PERMISSION_GRANTED){
+        if(isSmsPermissionGranted() != PackageManager.PERMISSION_GRANTED &&
+            ContextCompat.checkSelfPermission(this,Manifest.permission.SEND_SMS) != PackageManager.PERMISSION_GRANTED){
 
             //permission is not granted
             requestReadAndSendSmsPermission();
@@ -45,7 +46,9 @@ public class MainActivity extends AppCompatActivity {
 
             case SMS_READ :
 
-                if( grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED){
+                if( grantResults.length > 0
+                        && grantResults[0] == PackageManager.PERMISSION_GRANTED
+                        && grantResults[1] == PackageManager.PERMISSION_GRANTED){
 
                     SmsReceiver.bindListener(new SmsListener() {
                         @Override
@@ -69,9 +72,9 @@ public class MainActivity extends AppCompatActivity {
                                     null);
                 }
 
-            case SMS_SEND:
+                Log.d("sms sent:","tru");
 
-                if()
+
         }
     }
 
@@ -85,11 +88,15 @@ public class MainActivity extends AppCompatActivity {
     private void requestReadAndSendSmsPermission(){
 
         if(ActivityCompat.shouldShowRequestPermissionRationale(this,Manifest.permission.READ_SMS)){
-
+            //dialog to show why you need the permission
+            //in case you were denied the first time
 
         }else{
-            ActivityCompat.requestPermissions(this,new String[]{ Manifest.permission.READ_SMS},SMS_READ);
-            ActivityCompat.requestPermissions(this,String][]{ Manifest.permission.SEND_SMS},);
+
+            ActivityCompat.requestPermissions(
+                    this,
+                    new String[]{ Manifest.permission.READ_SMS,Manifest.permission.SEND_SMS}
+                    ,SMS_READ);
 
 
         }

@@ -4,12 +4,19 @@ package com.example.groupsms;
 import android.Manifest;
 import android.app.Activity;
 import android.content.pm.PackageManager;
+import android.support.design.widget.FloatingActionButton;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.telephony.SmsManager;
 import android.util.Log;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.widget.Button;
+import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -19,6 +26,7 @@ public class MainActivity extends AppCompatActivity {
     final int SMS_SEND = 2;
 
     TextView smsView;
+    FloatingActionButton fab;
     //TODO : add a floatingAction Button to add a chat group
     //TODO : 
 
@@ -28,7 +36,16 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        smsView = findViewById(R.id.sms);
+        fab = findViewById(R.id.fab);
+
+        fab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                //TODO : open create group dialog box
+                createGroupDialog();
+                //Snackbar.make(v,"h",Snackbar.LENGTH_LONG).setAction("Action",null).show();
+            }
+        });
 
         //check if SMS sending and viewing permissions
         //is granted
@@ -93,6 +110,34 @@ public class MainActivity extends AppCompatActivity {
     public int isSmsPermissionGranted() {
 
         return ContextCompat.checkSelfPermission(this, Manifest.permission.READ_SMS);
+    }
+
+    //to create the Create Group Dialog Box
+    private void createGroupDialog(){
+        final AlertDialog dialogBuilder = new AlertDialog.Builder(this).create();
+        LayoutInflater inflater = this.getLayoutInflater();
+        View dialogView = inflater.inflate(R.layout.create_group_dialog_box,null);
+
+        final EditText editText = dialogView.findViewById(R.id.group_name_editText);
+        Button cancelButton = dialogView.findViewById(R.id.cancel_group_button);
+        Button createButton = dialogView.findViewById(R.id.create_group_button);
+
+        cancelButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                //TODO: return to main activity
+            }
+        });
+
+        createButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                //TODO: open a new activity with the name of group
+            }
+        });
+
+        dialogBuilder.setView(dialogView);
+        dialogBuilder.show();
     }
 
     //request runtime SMS permission

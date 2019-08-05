@@ -5,6 +5,8 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.telephony.SmsMessage;
+import android.util.Log;
+import android.widget.Toast;
 
 public class SmsReceiver extends BroadcastReceiver {
     //interface
@@ -27,15 +29,17 @@ public class SmsReceiver extends BroadcastReceiver {
             String sender = smsMessage.getDisplayOriginatingAddress();
             //Check the sender to filter messages which we require to read
 
-            if (sender.equals("GADGETSAINT"))
-            {
+            Log.d("name of sender",sender);
+            Toast.makeText(context.getApplicationContext(),sender,Toast.LENGTH_LONG).show();
+
+
 
                 String messageBody = smsMessage.getMessageBody();
 
                 //Pass the message text to interface
                 mListener.messageReceived(messageBody);
 
-            }
+
         }
 
     }

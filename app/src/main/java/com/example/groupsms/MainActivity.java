@@ -10,6 +10,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.telephony.SmsManager;
 import android.util.Log;
+import android.widget.TextView;
 import android.widget.Toast;
 
 public class MainActivity extends AppCompatActivity {
@@ -17,90 +18,101 @@ public class MainActivity extends AppCompatActivity {
     final int SMS_READ = 1;
     final int SMS_SEND = 2;
 
-    public static final String OTP_REGEX = "[0-9]{1,6}";
+    TextView smsView;
+    //TODO : add a floatingAction Button to add a chat group
+    //TODO : 
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        smsView = findViewById(R.id.sms);
+
         //check if SMS sending and viewing permissions
         //is granted
-        if(isSmsPermissionGranted() != PackageManager.PERMISSION_GRANTED &&
-            ContextCompat.checkSelfPermission(this,Manifest.permission.SEND_SMS) != PackageManager.PERMISSION_GRANTED){
+        if (isSmsPermissionGranted() != PackageManager.PERMISSION_GRANTED &&
+                ContextCompat.checkSelfPermission(this, Manifest.permission.SEND_SMS) != PackageManager.PERMISSION_GRANTED) {
 
-            //permission is not granted
+            // if permission is not granted
             requestReadAndSendSmsPermission();
 
+        } else {
+
+            SmsReceiver.bindListener(new SmsListener() {
+                @Override
+                public void messageReceived(String messageText) {
+
+                    //From the received text string you may do string operations to get the required OTP
+                    //It depends on your SMS format
+                    Log.e("Message", messageText);
+
+
+                    smsView.setText(messageText);
+
+                    Toast.makeText(MainActivity.this, "Message: " + messageText, Toast.LENGTH_LONG).show();
+
+                    //TODO: send message to appropriate contact list
+
+                }
+            });
         }
-
-
 
 
     }
 
     @Override
-    public void onRequestPermissionsResult(int requestCode, String [] permissions, int[] grantResults){
+    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
 
-        switch( requestCode){
+        switch (requestCode) {
 
-            case SMS_READ :
+            case SMS_READ:
 
-                if( grantResults.length > 0
+                if (grantResults.length > 0
                         && grantResults[0] == PackageManager.PERMISSION_GRANTED
-                        && grantResults[1] == PackageManager.PERMISSION_GRANTED){
-
-                    SmsReceiver.bindListener(new SmsListener() {
-                        @Override
-                        public void messageReceived(String messageText) {
-
-                            //From the received text string you may do string operations to get the required OTP
-                            //It depends on your SMS format
-                            Log.e("Message",messageText);
-                            Toast.makeText(MainActivity.this,"Message: "+messageText,Toast.LENGTH_LONG).show();
-
-                        }
-                    });
+                        && grantResults[1] == PackageManager.PERMISSION_GRANTED) {
 
 
+//                    SmsManager.getDefault()
+//                            .sendTextMessage("0738965577",
+//                                    null,
+//                                    "Hello World",
+//                                    null,
+//                                    null);
+//                }
+//
+//                Log.d("sms sent:", "tru");
 
-                    SmsManager.getDefault()
-                            .sendTextMessage("0719144643",
-                                    null,
-                                    "Hello WOrld",
-                                    null,
-                                    null);
+
                 }
-
-                Log.d("sms sent:","tru");
-
-
         }
+
     }
 
-
-    public int isSmsPermissionGranted(){
+    public int isSmsPermissionGranted() {
 
         return ContextCompat.checkSelfPermission(this, Manifest.permission.READ_SMS);
     }
 
     //request runtime SMS permission
-    private void requestReadAndSendSmsPermission(){
+    private void requestReadAndSendSmsPermission() {
 
-        if(ActivityCompat.shouldShowRequestPermissionRationale(this,Manifest.permission.READ_SMS)){
+        if (ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.READ_SMS)) {
             //dialog to show why you need the permission
             //in case you were denied the first time
 
-        }else{
+        } else {
 
             ActivityCompat.requestPermissions(
                     this,
-                    new String[]{ Manifest.permission.READ_SMS,Manifest.permission.SEND_SMS}
-                    ,SMS_READ);
+                    new String[]{Manifest.permission.READ_SMS, Manifest.permission.SEND_SMS}
+                    , SMS_READ);
 
 
         }
 
 
     }
+
 }

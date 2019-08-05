@@ -1,3 +1,7 @@
 <resources>
     <string name="app_name">Group SMs</string>
+    <string name="create_group_text">Create A Group</string>
+    <string name="create_group_editText">Group Name</string>
+    <string name="cancel_group_button">Cancel</string>
+    <string name="create_group_button">Create</string>
 </resources>
